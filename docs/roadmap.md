@@ -10,11 +10,11 @@ This document outlines the high-level product development plan from initial setu
 
 **Goal:** Establish a stable foundation for further development.
 
-* Repository initialization.
-* Next.js (App Router) + TypeScript setup.
-* Linting, formatting, and CI configuration.
-* Definition of base architecture.
-* Storyblok space and content model setup.
+- Repository initialization.
+- Next.js (App Router) + TypeScript setup.
+- Linting, formatting, and CI configuration.
+- Definition of base architecture.
+- Storyblok space and content model setup.
 
 ---
 
@@ -22,10 +22,10 @@ This document outlines the high-level product development plan from initial setu
 
 **Goal:** Deliver reference content from the CMS.
 
-* Storyblok integration.
-* Core reference content pages.
-* Static page generation.
-* Minimal UI implementation.
+- Storyblok integration.
+- Core reference content pages.
+- Static page generation.
+- Minimal UI implementation.
 
 ---
 
@@ -33,9 +33,9 @@ This document outlines the high-level product development plan from initial setu
 
 **Goal:** Enable fast and intuitive access to content.
 
-* Primary navigation.
-* Breadcrumbs.
-* Full-text search.
+- Primary navigation.
+- Breadcrumbs.
+- Full-text search.
 
 ---
 
@@ -43,9 +43,9 @@ This document outlines the high-level product development plan from initial setu
 
 **Goal:** Support multilingual usage and stable performance.
 
-* RU/EN localization.
-* Language-aware routing.
-* Caching and load optimization.
+- RU/EN localization.
+- Language-aware routing.
+- Caching and load optimization.
 
 ---
 
@@ -53,16 +53,16 @@ This document outlines the high-level product development plan from initial setu
 
 **Goal:** Prepare the MVP for public exposure.
 
-* Testing of critical flows.
-* Documentation (README, docs).
-* Final UI polish.
-* Public deployment.
+- Testing of critical flows.
+- Documentation (README, docs).
+- Final UI polish.
+- Public deployment.
 
 ---
 
 ## Post-MVP (V1 / V2)
 
-* Accounts and personalization.
-* Notes and bookmarks.
-* GM Board.
-* Advanced search and filtering.
+- Accounts and personalization.
+- Notes and bookmarks.
+- GM Board.
+- Advanced search and filtering.

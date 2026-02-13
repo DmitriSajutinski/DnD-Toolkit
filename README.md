@@ -104,17 +104,17 @@ npm run dev
   Strict TypeScript configuration, no implicit `any`.
 
 - **Testing Strategy**
-    - Unit tests for core business logic
-    - End-to-end tests for critical user scenarios
+  - Unit tests for core business logic
+  - End-to-end tests for critical user scenarios
 
 - **Linting & Formatting**  
   Enforced, consistent code style across the codebase.
 
 - **CI Pipeline**
-    - Type checking
-    - Linting
-    - Automated tests
-    - Pull request quality gates
+  - Type checking
+  - Linting
+  - Automated tests
+  - Pull request quality gates
 
 ---
 

@@ -15,20 +15,24 @@ During live and online D&D sessions, players and the game master frequently need
 ## Persona 1: Player
 
 ### Usage Context
+
 - During combat and social scenes in a session (online or offline)
 - On a mobile phone or laptop
 
 ### Tasks
+
 - Quickly check available actions, conditions, and effects
 - Clarify mechanics without interrupting the game
 - Understand rules in their native language
 
 ### Pain Points
+
 - Slow searches through PDFs or websites
 - Complex wording and lack of localization
 - Loss of group time due to pauses
 
 ### Expectations
+
 - Instant search and navigation
 - Short, well-structured descriptions
 - Full mobile support
@@ -38,20 +42,24 @@ During live and online D&D sessions, players and the game master frequently need
 ## Persona 2: DM / GM (Dungeon Master / Game Master)
 
 ### Usage Context
+
 - Session preparation and real-time game management
 - Simultaneous use of multiple information sources
 
 ### Tasks
+
 - Quickly verify rules and edge cases
 - Maintain game pace
 - Show references to players when needed
 
 ### Pain Points
+
 - Overloaded information sources
 - Lack of a single, fast, reliable tool
 - Difficulty working with materials on the fly
 
 ### Expectations
+
 - A dependable reference without unnecessary content
 - Fast access to core rules
 - Potential for expansion (notes, boards, tools)
@@ -61,6 +69,7 @@ During live and online D&D sessions, players and the game master frequently need
 # Value Proposition
 
 ## Product Value
+
 - Fast access to D&D rules optimized for in-game usage
 - Multilingual support (RU/ET/EN) with a single source of truth
 - Structured, concise content without unnecessary verbosity
@@ -68,6 +77,7 @@ During live and online D&D sessions, players and the game master frequently need
 - Clear information architecture aligned with gameplay scenarios
 
 ## Why It’s Better Than PDFs / Bookmarks / Websites
+
 - Significantly faster navigation and search
 - Content tailored for “in-game” reference rather than long-form reading
 - No cluttered UI or advertising
@@ -78,25 +88,25 @@ During live and online D&D sessions, players and the game master frequently need
 # Success Metrics (MVP)
 
 - **Time-to-Information:** average time to find a rule < 5 seconds
-    - *Measurement:* manual tests, user scenarios
+  - _Measurement:_ manual tests, user scenarios
 
 - **Search Success Rate:** ≥ 90% successful searches on the first query
-    - *Measurement:* search analytics
+  - _Measurement:_ search analytics
 
 - **Session Usage:** application used in at least one full game session
-    - *Measurement:* self-reporting, logging
+  - _Measurement:_ self-reporting, logging
 
 - **Mobile Usability Score:** no critical UX issues on mobile
-    - *Measurement:* Lighthouse, manual testing
+  - _Measurement:_ Lighthouse, manual testing
 
 - **i18n Coverage:** 100% of UI and content available in RU and EN
-    - *Measurement:* automated checks
+  - _Measurement:_ automated checks
 
 - **Stability:** no runtime errors in production
-    - *Measurement:* error logging
+  - _Measurement:_ error logging
 
 - **Documentation Completeness:** README and product documentation available
-    - *Measurement:* checklist review  
+  - _Measurement:_ checklist review
 
 # MVP Definition
 
