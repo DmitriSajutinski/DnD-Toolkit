@@ -62,8 +62,8 @@ The MVP is a web-based reference hub for Dungeons & Dragons players, designed to
 
 ### Performance & Reliability
 
-- ISR / SSG for reference pages.
-- Caching at Next.js and CDN levels.
+- Prerendering / SSG for reference pages.
+- Caching at Nitro and CDN levels.
 - Graceful fallback in case of CMS unavailability.
 
 ### Quality & Developer Experience
@@ -106,7 +106,7 @@ The MVP is a web-based reference hub for Dungeons & Dragons players, designed to
 
 ### Technical
 
-- Next.js App Router + TypeScript.
+- Nuxt 3 + TypeScript.
 - Storyblok as a headless CMS.
 - Deployment on Vercel.
 
@@ -151,7 +151,7 @@ The MVP is a web-based reference hub for Dungeons & Dragons players, designed to
 ### Iteration 0 — Setup
 
 - Repository initialization.
-- Next.js, TypeScript, and CI configuration.
+- Nuxt 3, TypeScript, and CI configuration.
 - Base architecture setup.
 
 ### Iteration 1 — Content Core

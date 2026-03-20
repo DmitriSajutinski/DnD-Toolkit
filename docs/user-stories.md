@@ -51,7 +51,7 @@ As a _Player_, I want to browse content grouped by categories (Actions, Conditio
 **Technical Notes:**
 
 - Categories and hierarchy are sourced from the headless CMS.
-- Navigation must be URL-driven (App Router).
+- Navigation must be URL-driven (Nuxt file-based routing).
 
 ---
 
@@ -96,7 +96,7 @@ As a _Player_, I want to open a specific entry (rule, condition, action), so tha
 **Technical Notes:**
 
 - Content is rendered from CMS data using a typed schema.
-- Pages should be statically optimized where applicable (SSG / ISR).
+- Pages should be statically optimized where applicable (SSG / prerendering).
 
 ---
 
@@ -321,7 +321,7 @@ The following requirements apply to all user stories without exception:
 - Responsive behavior and mobile usability.
 - Strong type safety (TypeScript, CMS types).
 - Basic accessibility (semantic markup, contrast, focus).
-- Performance considerations (minimal payloads, caching, SSG / ISR where applicable).
+- Performance considerations (minimal payloads, caching, SSG / prerendering where applicable).
 
 ---
 

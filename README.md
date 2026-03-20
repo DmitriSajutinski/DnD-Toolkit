@@ -1,4 +1,80 @@
-# DnD Reference Hub
+# Nuxt Minimal Starter
+
+Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+
+## Setup
+
+Make sure to install dependencies:
+
+```bash
+# npm
+npm install
+
+# pnpm
+pnpm install
+
+# yarn
+yarn install
+
+# bun
+bun install
+```
+
+## Development Server
+
+Start the development server on `http://localhost:3000`:
+
+```bash
+# npm
+npm run dev
+
+# pnpm
+pnpm dev
+
+# yarn
+yarn dev
+
+# bun
+bun run dev
+```
+
+## Production
+
+Build the application for production:
+
+```bash
+# npm
+npm run build
+
+# pnpm
+pnpm build
+
+# yarn
+yarn build
+
+# bun
+bun run build
+```
+
+Locally preview production build:
+
+```bash
+# npm
+npm run preview
+
+# pnpm
+pnpm preview
+
+# yarn
+yarn preview
+
+# bun
+bun run preview
+```
+
+Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+# Grimo - Dungeon and Dragons Grimoire
 
 A production-oriented pet project built as a fast, reliable reference tool for Dungeons & Dragons players during live game sessions.
 
@@ -27,8 +103,8 @@ The product is explicitly **player-first**. Game Master (GM)–specific function
 
 ## 3. Tech Stack
 
-- **Next.js (App Router)**  
-  Application framework providing routing, rendering, and server-first architecture.
+- **Nuxt 3 (Vue 3)**
+  Application framework providing file-based routing, SSR, and server-first architecture via Nitro.
 
 - **TypeScript (strict)**  
   Ensures type safety and reduces runtime errors.
@@ -53,7 +129,7 @@ The project follows a production-grade architectural approach focused on scalabi
 
 Key principles:
 
-- Server-first rendering using Next.js App Router
+- Server-first rendering using Nuxt 3 and Nitro
 - Full separation of content and application logic via a headless CMS
 - Minimal user state in MVP, with no server-side persistence
 - All non-trivial technical decisions are documented and traceable
@@ -69,13 +145,15 @@ Relevant documentation:
 
 High-level repository layout:
 
-- /app # Next.js App Router (routes, layouts, pages)
+- /pages # File-based routes (Nuxt auto-routing)
+- /layouts # Application shell layouts
 - /components # Reusable UI components
+- /composables # Shared Vue composables (auto-imported)
+- /server # Nitro server — API routes (server/api/), utilities
 - /features # Feature-oriented modules (domain-driven grouping)
 - /lib # Utilities, clients, shared logic
 - /content # Content models and schemas
 - /docs # Project documentation
-- /tests # Unit and E2E tests
 - /public # Static assets
 
 The structure is designed for clarity, predictable ownership, and long-term scalability.

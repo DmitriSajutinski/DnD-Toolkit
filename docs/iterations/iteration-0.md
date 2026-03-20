@@ -1,0 +1,360 @@
+# Iteration 0 — Foundation & Setup
+
+**Goal:** Establish a stable, consistent development foundation before any feature work begins. Every tool, config, and convention set here will apply to the entire project lifetime. Cutting corners in Iteration 0 creates friction in every subsequent iteration.
+
+**Exit criteria:** `npm run dev` works, `npm run lint` and `npm run typecheck` pass with zero errors, CI runs on every push, and the directory structure is in place and ready to receive code.
+
+---
+
+## 1. TypeScript — Strict Mode
+
+**Why:** The project commitment (ADR-0001, `mvp-scope.md`) is TypeScript strict. Setting this up now means all future code is written strictly from the start, avoiding a painful tightening pass later.
+
+**Nuxt 4 note:** The root `tsconfig.json` contains only `references` to auto-generated configs in `.nuxt/`. Adding `compilerOptions` there directly has no effect under project references compilation. Strict mode must be set via `nuxt.config.ts` — Nuxt propagates it into `.nuxt/tsconfig.app.json` and siblings on the next `prepare` / `dev` run.
+
+### What was done
+
+- [x] Added `typescript: { strict: true }` to `nuxt.config.ts`:
+  ```ts
+  typescript: {
+    strict: true,
+  },
+  ```
+- [x] Added `typecheck` script to `package.json`:
+  ```json
+  "typecheck": "nuxt typecheck"
+  ```
+
+### Verify
+
+```bash
+npm run typecheck
+```
+
+Must pass with zero errors on the clean scaffold before proceeding.
+
+---
+
+## 2. ESLint
+
+**Why:** Catches bugs and enforces Vue 3 / `<script setup>` conventions automatically. Much cheaper to enforce from commit 1 than to fix retroactively.
+
+**Nuxt note:** `@nuxt/eslint` uses the modern flat config format. Running `nuxt prepare` (or `postinstall`) auto-generates `.nuxt/eslint.config.mjs` and creates the root `eslint.config.mjs` that extends it. No manual config bootstrap needed.
+
+### What was done
+
+- [x] Installed `@nuxt/eslint`:
+  ```bash
+  npm install -D @nuxt/eslint
+  ```
+- [x] Added to `nuxt.config.ts`:
+  ```ts
+  modules: ['@nuxt/eslint'],
+  ```
+- [x] Ran `nuxt prepare` — auto-generated `eslint.config.mjs` and `.nuxt/eslint.config.mjs`
+- [x] Added baseline rules to `eslint.config.mjs`:
+  ```js
+  export default withNuxt({
+    rules: {
+      'vue/multi-word-component-names': 'error',
+      'vue/component-api-style': ['error', ['script-setup']],
+      '@typescript-eslint/no-explicit-any': 'error',
+    },
+  })
+  ```
+- [x] Added scripts to `package.json`:
+  ```json
+  "lint": "eslint .",
+  "lint:fix": "eslint . --fix"
+  ```
+- [x] `npm run lint` — passes with zero errors on the scaffold
+
+---
+
+## 3. Prettier
+
+**Why:** Eliminates formatting debates and diff noise. Configured once, forgotten forever.
+
+**Note on `prettier-plugin-vue`:** Prettier 3.x has built-in Vue SFC support via the native `vue` parser — no additional plugin is needed. `prettier-plugin-vue` caused a parse error (`Missing visitor keys for 'undefined'`) on Nuxt component tags in Prettier 3.8, so it was excluded.
+
+### What was done
+
+- [x] `prettier` and `prettier-plugin-vue` installed (plugin not used — see note above)
+- [x] Created `.prettierrc`:
+  ```json
+  {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "printWidth": 100
+  }
+  ```
+- [x] Created `.prettierignore`:
+  ```
+  node_modules
+  .nuxt
+  .output
+  dist
+  ```
+- [x] Added scripts to `package.json`:
+  ```json
+  "format": "prettier --write .",
+  "format:check": "prettier --check ."
+  ```
+- [x] `npm run format` — baseline applied, all files pass
+- [x] `npm run format:check` — passes with zero errors
+
+---
+
+## 4. Husky + lint-staged (Pre-commit Gate)
+
+**Why:** Prevents broken or unformatted code from ever entering the repository. Lint errors in CI are frustrating; lint errors that never reach CI are invisible.
+
+### Tasks
+
+- [ ] Install:
+  ```bash
+  npm install -D husky lint-staged
+  npx husky init
+  ```
+- [ ] Configure `.husky/pre-commit` to run lint-staged:
+  ```bash
+  npx lint-staged
+  ```
+- [ ] Add `lint-staged` config to `package.json`:
+  ```json
+  "lint-staged": {
+    "*.{vue,ts,js}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,css}": ["prettier --write"]
+  }
+  ```
+- [ ] Make a test commit to confirm the hook fires and passes.
+
+---
+
+## 5. `nuxt.config.ts` — Baseline Configuration
+
+**Why:** Establishes the project's Nuxt configuration skeleton. Modules, runtime config, and route rules added here will be extended by every future iteration — better to have the structure correct from the start.
+
+### Tasks
+
+- [ ] Update `nuxt.config.ts` to the baseline structure:
+
+  ```ts
+  export default defineNuxtConfig({
+    compatibilityDate: '2025-07-15',
+
+    devtools: { enabled: true },
+
+    modules: [
+      '@nuxt/eslint',
+      // '@nuxtjs/i18n',     -- Iteration 3
+      // '@nuxtjs/storyblok', -- Iteration 1
+      // '@pinia/nuxt',       -- when needed
+    ],
+
+    runtimeConfig: {
+      storyblokToken: '', // set via .env: NUXT_STORYBLOK_TOKEN
+      public: {
+        storyblokVersion: 'published',
+      },
+    },
+
+    typescript: {
+      strict: true,
+      typeCheck: true,
+    },
+
+    future: {
+      compatibilityVersion: 4,
+    },
+  })
+  ```
+
+- [ ] Create `.env` (gitignored) and `.env.example` (committed):
+  ```
+  NUXT_STORYBLOK_TOKEN=
+  ```
+
+---
+
+## 6. Directory Structure
+
+**Why:** Nuxt auto-imports and module resolution depend on directory conventions. Establishing the structure now means auto-imports work from day one and there is no ambiguity about where things go.
+
+### Tasks
+
+- [ ] Create the following directories and placeholder files:
+
+  ```
+  pages/
+    index.vue               # Root route — temporary placeholder
+  layouts/
+    default.vue             # Root layout shell
+  components/
+    .gitkeep
+  composables/
+    .gitkeep
+  server/
+    api/
+      .gitkeep
+  assets/
+    css/
+      main.css              # Global styles entry point
+  public/
+    .gitkeep
+  ```
+
+- [ ] `layouts/default.vue` — minimal shell:
+
+  ```vue
+  <template>
+    <div>
+      <slot />
+    </div>
+  </template>
+  ```
+
+- [ ] `pages/index.vue` — temporary placeholder:
+
+  ```vue
+  <template>
+    <main>
+      <h1>Grimoire</h1>
+    </main>
+  </template>
+  ```
+
+- [ ] Update `app.vue` to use the layout system:
+  ```vue
+  <template>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </template>
+  ```
+
+### Nuxt 4 directory convention note
+
+This project uses `compatibilityVersion: 4`. In Nuxt 4, the recommended convention is to place application code inside an `app/` subdirectory (`app/pages/`, `app/components/`, etc.) to separate it from server and config files. Decide and document the convention before adding real files:
+
+- **Option A (Nuxt 4 `app/` layout):** all source under `app/` — cleaner separation, forward-compatible.
+- **Option B (Nuxt 3 flat layout):** `pages/`, `components/` at root — simpler, more familiar.
+
+Pick one and be consistent. Add a note to `architecture-overview.md` once decided.
+
+---
+
+## 7. `error.vue` — Global Error Page
+
+**Why:** Without `error.vue`, Nuxt shows a raw error page. Setting a minimal one now means CMS failures and 404s during development already look intentional rather than broken.
+
+### Tasks
+
+- [ ] Create `error.vue`:
+
+  ```vue
+  <script setup lang="ts">
+  import type { NuxtError } from '#app'
+
+  const props = defineProps<{ error: NuxtError }>()
+
+  const handleError = () => clearError({ redirect: '/' })
+  </script>
+
+  <template>
+    <div>
+      <h1>{{ error.statusCode }}</h1>
+      <p>{{ error.message }}</p>
+      <button @click="handleError">Go home</button>
+    </div>
+  </template>
+  ```
+
+---
+
+## 8. CI Pipeline
+
+**Why:** Automated checks on every push are the safety net that makes everything else trustworthy. The pipeline is simple in Iteration 0 but must be in place before any real code is written.
+
+### Pipeline stages (in order)
+
+1. **Typecheck** — `npm run typecheck`
+2. **Lint** — `npm run lint`
+3. **Format check** — `npm run format:check`
+4. **Build** — `npm run build` (confirms the scaffold builds cleanly)
+
+### Tasks
+
+- [ ] Create `.github/workflows/ci.yml`:
+
+  ```yaml
+  name: CI
+
+  on:
+    push:
+      branches: [main]
+    pull_request:
+      branches: [main]
+
+  jobs:
+    check:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 24
+            cache: 'npm'
+        - run: npm ci
+        - run: npm run typecheck
+        - run: npm run lint
+        - run: npm run format:check
+        - run: npm run build
+  ```
+
+- [ ] Push to GitHub and confirm the workflow runs green.
+
+> If not using GitHub Actions, adapt the stages above to your CI provider. The stage order and commands remain the same.
+
+---
+
+## 9. README — Getting Started Section
+
+**Why:** The README already has a project overview. The setup instructions section at the top is currently the generic Nuxt scaffold content. Update it to reflect the actual project setup.
+
+### Tasks
+
+- [ ] Update the top of `README.md` setup section to:
+  - List the correct Node.js version requirement (>=24)
+  - Reference `.env.example` for environment variables
+  - Document the four key scripts: `dev`, `typecheck`, `lint`, `build`
+
+---
+
+## Completion Checklist
+
+Before closing Iteration 0, all of the following must be true:
+
+- [ ] `npm run typecheck` — passes with zero errors
+- [ ] `npm run lint` — passes with zero errors
+- [ ] `npm run format:check` — passes
+- [ ] `npm run build` — succeeds
+- [ ] `npm run dev` — app loads at `http://localhost:3000`
+- [ ] Pre-commit hook fires on `git commit`
+- [ ] CI pipeline is green on `main`
+- [ ] `.env.example` is committed, `.env` is gitignored
+- [ ] Directory structure matches section 6
+- [ ] `error.vue` exists
+- [ ] `app.vue` uses `<NuxtLayout>` + `<NuxtPage>`
+
+---
+
+## What Is Explicitly Out of Scope for Iteration 0
+
+- Storyblok integration — Iteration 1
+- i18n setup — Iteration 3
+- Any content, real pages, or UI components
+- Pinia / state management
+- Deployment configuration
+- Visual design or styling beyond the CSS entry point file

@@ -11,7 +11,7 @@ This document outlines the high-level product development plan from initial setu
 **Goal:** Establish a stable foundation for further development.
 
 - Repository initialization.
-- Next.js (App Router) + TypeScript setup.
+- Nuxt 3 + TypeScript setup.
 - Linting, formatting, and CI configuration.
 - Definition of base architecture.
 - Storyblok space and content model setup.

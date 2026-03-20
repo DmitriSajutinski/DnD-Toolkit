@@ -1,4 +1,4 @@
-# Architecture Overview — DnD Reference Hub (Next.js + Storyblok)
+# Architecture Overview — DnD Reference Hub (Nuxt 3 + Storyblok)
 
 This document describes the target architecture of the pet project “DnD reference hub” for players (and, in the future, GMs). Its purpose is to capture how the system is structured, why specific decisions were made, and where responsibility boundaries lie, so that the document can serve as a reference for implementation, scaling, and future ADRs.
 
@@ -6,7 +6,7 @@ This document describes the target architecture of the pet project “DnD refere
 >
 > - The system is predominantly read-only; content changes are performed via the CMS, not through the application.
 > - The MVP is optimized for fast access to reference information during live game sessions; priorities are latency, predictable UI, and perceived responsiveness similar to offline usage.
-> - Deployment follows a standard Next.js setup (Vercel or equivalent) with support for ISR and platform-level caching.
+> - Deployment follows a standard Nuxt 3 setup (Vercel with Nuxt preset, or a Node server) with support for prerendering and platform-level caching.
 > - Internationalization: RU/ET/EN for both UI and content; locale affects routing and content resolution.
 > - MVP has no accounts and no server-side user state; user preferences (e.g. favorites) are stored locally in the browser.
 
@@ -14,7 +14,7 @@ This document describes the target architecture of the pet project “DnD refere
 
 ## 1) Architecture Overview
 
-The system is a content-driven web application built with Next.js (App Router), relying primarily on server-side rendering via React Server Components and using a headless CMS (Storyblok) as its data source. The application provides fast access to structured reference content (rules, conditions, actions, etc.) with navigation, search, and bilingual support. Content is delivered through a dedicated Content Access Layer that isolates the domain model from CMS-specific details.
+The system is a content-driven web application built with Nuxt 3 (Vue 3), relying primarily on server-side rendering and using a headless CMS (Storyblok) as its data source. The application provides fast access to structured reference content (rules, conditions, actions, etc.) with navigation, search, and bilingual support. Content is delivered through a dedicated Content Access Layer that isolates the domain model from CMS-specific details.
 
 The core principle is **content-first + performance-first**. Content is modeled as explicit domain entities (Condition, Action, etc.), while delivery and rendering are optimized for fast read access during sessions. The MVP intentionally keeps complexity to a minimum: server-side rendering with caching and revalidation, without server-side user state. At the same time, the architecture anticipates future extensions such as authentication, notes, GM tools, and media support.
 
@@ -28,7 +28,7 @@ The core principle is **content-first + performance-first**. Content is modeled 
 
 **Client / server at a glance:**
 
-- The server side (Next.js runtime) handles routing, content fetching and validation, caching, and HTML/RSC generation.
+- The server side (Nitro server runtime) handles routing, content fetching and validation, caching, and HTML generation.
 - The client side (browser) handles interactivity where required (search UI, filters, favorites, local preferences) and UX patterns (loading states, navigation).
 
 ---
@@ -39,7 +39,7 @@ Textual representation with responsibility boundaries:
 
 - **User**
   → **Browser (UI runtime)**
-  → **Next.js App Router (Server Runtime)**
+  → **Nuxt 3 / Nitro (Server Runtime)**
   → **Content Access Layer (ContentRepository + mappers/validators)**
   → **CMS API (Storyblok Delivery API + Webhooks)**
   → **Storyblok Content Storage**
@@ -50,11 +50,11 @@ Extended view (including caching and i18n):
   → Browser
   - local state (favorites, settings)
   - client-side navigation
-    → Next.js (App Router)
+    → Nuxt 3 / Nitro
   - route resolution (including locale prefix)
-  - RSC rendering / SSR
-  - error boundaries / loading UI
-  - cache layer (Next.js fetch cache / ISR / CDN cache)
+  - SSR rendering / hydration
+  - error handling / loading UI
+  - cache layer (Nitro cache / routeRules / CDN cache)
     → Content Access Layer
   - ContentRepository interface
   - CMS adapter (Storyblok)
@@ -67,41 +67,43 @@ Extended view (including caching and i18n):
 
 **Responsibility boundaries:**
 
-- **Next.js layer:** web concerns (routing, rendering, caching orchestration).
+- **Nuxt 3 / Nitro layer:** web concerns (routing, rendering, caching orchestration).
 - **Content Access Layer:** stable domain contract and CMS adaptation.
 - **CMS:** source of truth for content; the application does not directly depend on CMS schemas.
 
 ---
 
-## 3) Frontend Architecture (Next.js App Router)
+## 3) Frontend Architecture (Nuxt 3)
 
-### App Router usage
+### File-based routing
 
-The App Router is used as the primary composition mechanism:
+Nuxt's file-based router is the primary composition mechanism:
 
-- **Route segments** for reference sections (rules, conditions, actions, tags).
-- **Nested layouts** for a stable application shell: header, navigation, search, language switcher, content container.
-- **Server-first data fetching:** pages and most components load data on the server via the ContentRepository.
+- **`pages/` directory** for reference sections (rules, conditions, actions, tags).
+- **`layouts/` directory** for a stable application shell: header, navigation, search, language switcher, content container.
+- **Server-first data fetching:** pages and most components load data on the server via `useAsyncData` / `useFetch` calling the ContentRepository.
 
-### Server Components vs Client Components
+### SSR vs Client-Only Components
 
-**Server Components (default):**
+All `.vue` components in Nuxt 3 render on the server by default and hydrate on the client. Client-only and server-only rendering are opt-in.
+
+**Server-rendered (default):**
 
 - Content pages (RulePage / Condition / Action) to minimize client JS and improve TTFB/LCP.
-- Navigation trees and breadcrumbs when derived from content and safely cacheable.
-- Metadata generation (title, description) based on domain entities.
+- Navigation trees and breadcrumbs derived from content and safely cacheable.
+- Metadata generation (title, description) via `useHead` / `useSeoMeta` based on domain entities.
 
-**Client Components (selectively):**
+**Client-only (selective):**
 
-- Interactive search UI (input, instant suggestions/results).
+- Interactive search UI (input, instant suggestions/results) — wrapped with `<ClientOnly>` or using `.client.vue` suffix.
 - Filters and sorting where immediate feedback is expected.
 - Favorites/bookmarks (local storage, UI synchronization).
 - Locale switcher if client-side UX without full reload is desired.
 
 **Decision rule:**
 
-- If a component can be fully derived from domain data and does not require browser APIs, it should be a Server Component.
-- If browser state, events, storage, or advanced interactivity is required, it becomes a Client Component.
+- If a component can be fully derived from domain data and does not require browser APIs, render it server-side (default).
+- If browser state, events, storage, or advanced interactivity is required, isolate it with `<ClientOnly>` or the `.client.vue` suffix.
 
 ### Routing strategy (static, dynamic, localized)
 
@@ -110,14 +112,14 @@ The App Router is used as the primary composition mechanism:
   - `/[locale]/conditions/[slug]`
   - `/[locale]/actions/[slug]`
   - `/[locale]/rules/[...path]` (for hierarchical rules)
-- **Static generation / ISR:** preferred for entity pages where content volume and update frequency allow.
+- **Prerendering / SSG:** preferred for entity pages — configured via `routeRules: { prerender: true }` in `nuxt.config.ts` or via `nuxt generate`.
 
-### Layouts, templates, loading/error boundaries
+### Layouts, loading states, and error handling
 
-- **Root layout:** typography/theme providers, base grid, global navigation.
+- **Root layout (`layouts/default.vue`):** typography/theme providers, base grid, global navigation.
 - **Section layouts:** shared UI for a section (e.g. list + filters).
-- **Loading boundaries:** localized loading states at section/page level.
-- **Error boundaries:** at route segment level to isolate CMS or mapping errors.
+- **Loading states:** handled via the `pending` state from `useAsyncData` / `useFetch`, and `<NuxtLoadingIndicator>`.
+- **Error handling:** `error.vue` for global errors; `useError()` and `createError()` for route-level CMS or mapping errors.
 
 ---
 
@@ -202,14 +204,14 @@ A dedicated `ContentRepository` interface exposes domain-oriented operations:
 Example flow for loading an entity page (e.g. Condition):
 
 1. **HTTP request → Route resolution**
-   - Next.js resolves the route segment and locale from the URL prefix.
+   - Nuxt resolves the route and locale from the URL prefix using file-based routing.
 
 2. **I18n resolving**
    - UI strings: relevant translation namespaces are loaded.
    - Content: locale is passed to the ContentRepository.
 
 3. **Content load**
-   - Server Component calls `ContentRepository.getConditionBySlug(locale, slug)`.
+   - The page's `useAsyncData` calls `ContentRepository.getConditionBySlug(locale, slug)`.
    - Repository fetches DTOs from the CMS.
 
 4. **Validation & mapping**
@@ -218,11 +220,11 @@ Example flow for loading an entity page (e.g. Condition):
    - Relations are resolved with controlled depth to avoid graph explosion.
 
 5. **Caching**
-   - Next.js fetch caching and/or ISR route caching applies according to policy.
+   - Nitro cache or `routeRules` in `nuxt.config.ts` apply according to policy.
    - List/search endpoints may use cache keys derived from `(locale, query, filters)`.
 
 6. **Render**
-   - Server Component renders the page using the domain entity.
+   - The Vue component renders using the domain entity, SSR by default.
    - Client Components receive only minimal necessary data.
 
 7. **Error handling**
@@ -233,12 +235,12 @@ Example flow for loading an entity page (e.g. Condition):
 
 ## 7) Caching & Revalidation Strategy
 
-### Caching in Next.js
+### Caching in Nuxt 3 / Nitro
 
 For a read-heavy reference application:
 
-- **Route-level caching / ISR** for entity and rule pages.
-- **Fetch caching** for CMS requests inside server components and repositories.
+- **Route-level prerendering / SWR** for entity and rule pages — configured via `routeRules` in `nuxt.config.ts`.
+- **Server-side fetch caching** for CMS requests inside `server/` handlers and repositories, using `cachedEventHandler` or Nitro storage.
 
 ### Revalidation approaches
 
@@ -299,7 +301,7 @@ For a read-heavy reference application:
 
 ### Error boundaries
 
-- Route-segment-level error boundaries isolate:
+- Route-level error handling (`error.vue`, `createError`) isolates:
   - content loading failures,
   - mapping/validation errors,
   - rendering issues.
@@ -310,7 +312,7 @@ For a read-heavy reference application:
 - Typical scenarios:
   - **Timeouts / 5xx:** show “content temporarily unavailable” with retry option.
   - **Partial degradation:** related blocks may be omitted while the main content remains visible.
-- Cached “last known good” pages via ISR may still be served.
+- Cached “last known good” pages via prerendering or SWR may still be served.
 
 ### Fallback strategies
 
@@ -350,12 +352,12 @@ For a read-heavy reference application:
 
 ## 11) Architecture Trade-offs
 
-1. **Server Components / SSR + caching vs SPA-first**
+1. **SSR + caching vs SPA-first**
    - Alternative: client-only SPA fetching CMS data directly.
    - Not chosen: worse performance control, larger JS bundles, higher latency risk.
    - Consequence: more complex server/client boundaries, better LCP and stability.
 
-2. **ISR / time-based revalidation vs webhook-only**
+2. **Prerendering / SWR vs webhook-only**
    - Alternative: webhook-only freshness.
    - Not chosen for MVP: higher operational complexity.
    - Consequence: small staleness windows, simpler operations.

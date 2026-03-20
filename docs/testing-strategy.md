@@ -55,7 +55,7 @@ The product is used in a **high cost-of-failure** context: during a live game se
 
 ### What is intentionally not tested at each level
 
-- **Unit:** Next.js routing, browser behavior, real Storyblok integration.
+- **Unit:** Nuxt routing, browser behavior, real Storyblok integration.
 - **Integration / Component:** full system behavior, timing/animation-dependent assertions.
 - **E2E:** exhaustive content combinations, pixel-perfect UI.
 
@@ -71,8 +71,8 @@ The product is used in a **high cost-of-failure** context: during a live game se
 
 ### What is not unit testing
 
-- React rendering and DOM behavior.
-- Next.js fetch and caching mechanics.
+- Vue rendering and DOM behavior.
+- Nuxt/Nitro fetch and caching mechanics.
 - Literal translation correctness.
 
 ### Mocking approach
@@ -95,10 +95,10 @@ The product is used in a **high cost-of-failure** context: during a live game se
 - UI components and shared building blocks.
 - Pages and components rendering normalized data.
 
-### Server vs Client Components
+### SSR vs Client-Only Components
 
-- **Server:** test render contracts and resilience.
-- **Client:** test interactivity and state transitions.
+- **SSR components (default):** test render contracts and resilience.
+- **Client-only components:** test interactivity and state transitions.
 
 ### States and i18n
 
@@ -161,7 +161,7 @@ The product is used in a **high cost-of-failure** context: during a live game se
 ## 7) Tooling
 
 - **Unit:** Vitest, TypeScript (strict).
-- **Component:** React Testing Library, jest-dom, axe-core.
+- **Component:** Vue Testing Library (`@testing-library/vue`), jest-dom, axe-core.
 - **E2E:** Playwright.
 - **Coverage:** unit + component focused.
 
