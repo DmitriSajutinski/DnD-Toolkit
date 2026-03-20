@@ -106,7 +106,7 @@ The MVP is a web-based reference hub for Dungeons & Dragons players, designed to
 
 ### Technical
 
-- Nuxt 3 + TypeScript.
+- Nuxt 4 + TypeScript.
 - Storyblok as a headless CMS.
 - Deployment on Vercel.
 
@@ -151,7 +151,7 @@ The MVP is a web-based reference hub for Dungeons & Dragons players, designed to
 ### Iteration 0 — Setup
 
 - Repository initialization.
-- Nuxt 3, TypeScript, and CI configuration.
+- Nuxt 4, TypeScript, and CI configuration.
 - Base architecture setup.
 
 ### Iteration 1 — Content Core

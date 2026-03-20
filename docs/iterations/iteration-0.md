@@ -112,23 +112,23 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
 ### Tasks
 
-- [ ] Install:
+- [x] Install:
   ```bash
   npm install -D husky lint-staged
   npx husky init
   ```
-- [ ] Configure `.husky/pre-commit` to run lint-staged:
+- [x] Configure `.husky/pre-commit` to run lint-staged:
   ```bash
   npx lint-staged
   ```
-- [ ] Add `lint-staged` config to `package.json`:
+- [x] Add `lint-staged` config to `package.json`:
   ```json
   "lint-staged": {
     "*.{vue,ts,js}": ["eslint --fix", "prettier --write"],
     "*.{json,md,css}": ["prettier --write"]
   }
   ```
-- [ ] Make a test commit to confirm the hook fires and passes.
+- [x] Make a test commit to confirm the hook fires and passes.
 
 ---
 
@@ -162,11 +162,10 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
     typescript: {
       strict: true,
-      typeCheck: true,
-    },
-
-    future: {
-      compatibilityVersion: 4,
+      // typeCheck is intentionally omitted — it runs the full TS compiler on
+      // every dev/build cycle and significantly slows the dev server.
+      // Type checking runs exclusively via `npm run typecheck` (nuxt typecheck)
+      // as a separate CI step.
     },
   })
   ```
@@ -187,25 +186,28 @@ Must pass with zero errors on the clean scaffold before proceeding.
 - [ ] Create the following directories and placeholder files:
 
   ```
-  pages/
-    index.vue               # Root route — temporary placeholder
-  layouts/
-    default.vue             # Root layout shell
-  components/
-    .gitkeep
-  composables/
-    .gitkeep
-  server/
+  app/                          # All UI source lives here (Nuxt 4 default)
+    pages/
+      index.vue                 # Root route — temporary placeholder
+    layouts/
+      default.vue               # Root layout shell
+    components/
+      .gitkeep
+    composables/
+      .gitkeep
+    assets/
+      css/
+        main.css                # Global styles entry point
+  server/                       # Nitro server — stays at root
     api/
       .gitkeep
-  assets/
-    css/
-      main.css              # Global styles entry point
-  public/
+  public/                       # Static files — stays at root
     .gitkeep
   ```
 
-- [ ] `layouts/default.vue` — minimal shell:
+  > **Nuxt 4 convention:** application code lives under `app/` to clearly separate it from server code and config files. `server/` and `public/` remain at the project root — Nuxt scans them there by default.
+
+- [ ] `app/layouts/default.vue` — minimal shell:
 
   ```vue
   <template>
@@ -215,7 +217,7 @@ Must pass with zero errors on the clean scaffold before proceeding.
   </template>
   ```
 
-- [ ] `pages/index.vue` — temporary placeholder:
+- [ ] `app/pages/index.vue` — temporary placeholder:
 
   ```vue
   <template>
@@ -225,23 +227,15 @@ Must pass with zero errors on the clean scaffold before proceeding.
   </template>
   ```
 
-- [ ] Update `app.vue` to use the layout system:
+- [x] `app/app.vue` — updated to use the layout system:
   ```vue
   <template>
+    <NuxtRouteAnnouncer />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
   </template>
   ```
-
-### Nuxt 4 directory convention note
-
-This project uses `compatibilityVersion: 4`. In Nuxt 4, the recommended convention is to place application code inside an `app/` subdirectory (`app/pages/`, `app/components/`, etc.) to separate it from server and config files. Decide and document the convention before adding real files:
-
-- **Option A (Nuxt 4 `app/` layout):** all source under `app/` — cleaner separation, forward-compatible.
-- **Option B (Nuxt 3 flat layout):** `pages/`, `components/` at root — simpler, more familiar.
-
-Pick one and be consistent. Add a note to `architecture-overview.md` once decided.
 
 ---
 
@@ -251,7 +245,7 @@ Pick one and be consistent. Add a note to `architecture-overview.md` once decide
 
 ### Tasks
 
-- [ ] Create `error.vue`:
+- [ ] Create `app/error.vue`:
 
   ```vue
   <script setup lang="ts">
@@ -345,7 +339,7 @@ Before closing Iteration 0, all of the following must be true:
 - [ ] CI pipeline is green on `main`
 - [ ] `.env.example` is committed, `.env` is gitignored
 - [ ] Directory structure matches section 6
-- [ ] `error.vue` exists
+- [ ] `app/error.vue` exists
 - [ ] `app.vue` uses `<NuxtLayout>` + `<NuxtPage>`
 
 ---

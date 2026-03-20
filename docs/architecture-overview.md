@@ -1,4 +1,5 @@
-# Architecture Overview — DnD Reference Hub (Nuxt 3 + Storyblok)
+
+# Architecture Overview — DnD Reference Hub (Nuxt 4 + Storyblok)
 
 This document describes the target architecture of the pet project “DnD reference hub” for players (and, in the future, GMs). Its purpose is to capture how the system is structured, why specific decisions were made, and where responsibility boundaries lie, so that the document can serve as a reference for implementation, scaling, and future ADRs.
 
@@ -6,7 +7,7 @@ This document describes the target architecture of the pet project “DnD refere
 >
 > - The system is predominantly read-only; content changes are performed via the CMS, not through the application.
 > - The MVP is optimized for fast access to reference information during live game sessions; priorities are latency, predictable UI, and perceived responsiveness similar to offline usage.
-> - Deployment follows a standard Nuxt 3 setup (Vercel with Nuxt preset, or a Node server) with support for prerendering and platform-level caching.
+> - Deployment follows a standard Nuxt 4 setup (Vercel with Nuxt preset, or a Node server) with support for prerendering and platform-level caching.
 > - Internationalization: RU/ET/EN for both UI and content; locale affects routing and content resolution.
 > - MVP has no accounts and no server-side user state; user preferences (e.g. favorites) are stored locally in the browser.
 
@@ -14,7 +15,7 @@ This document describes the target architecture of the pet project “DnD refere
 
 ## 1) Architecture Overview
 
-The system is a content-driven web application built with Nuxt 3 (Vue 3), relying primarily on server-side rendering and using a headless CMS (Storyblok) as its data source. The application provides fast access to structured reference content (rules, conditions, actions, etc.) with navigation, search, and bilingual support. Content is delivered through a dedicated Content Access Layer that isolates the domain model from CMS-specific details.
+The system is a content-driven web application built with Nuxt 4 (Vue 3), relying primarily on server-side rendering and using a headless CMS (Storyblok) as its data source. The application provides fast access to structured reference content (rules, conditions, actions, etc.) with navigation, search, and bilingual support. Content is delivered through a dedicated Content Access Layer that isolates the domain model from CMS-specific details.
 
 The core principle is **content-first + performance-first**. Content is modeled as explicit domain entities (Condition, Action, etc.), while delivery and rendering are optimized for fast read access during sessions. The MVP intentionally keeps complexity to a minimum: server-side rendering with caching and revalidation, without server-side user state. At the same time, the architecture anticipates future extensions such as authentication, notes, GM tools, and media support.
 
@@ -39,7 +40,7 @@ Textual representation with responsibility boundaries:
 
 - **User**
   → **Browser (UI runtime)**
-  → **Nuxt 3 / Nitro (Server Runtime)**
+  → **Nuxt 4 / Nitro (Server Runtime)**
   → **Content Access Layer (ContentRepository + mappers/validators)**
   → **CMS API (Storyblok Delivery API + Webhooks)**
   → **Storyblok Content Storage**
@@ -50,7 +51,7 @@ Extended view (including caching and i18n):
   → Browser
   - local state (favorites, settings)
   - client-side navigation
-    → Nuxt 3 / Nitro
+    → Nuxt 4 / Nitro
   - route resolution (including locale prefix)
   - SSR rendering / hydration
   - error handling / loading UI
@@ -67,25 +68,27 @@ Extended view (including caching and i18n):
 
 **Responsibility boundaries:**
 
-- **Nuxt 3 / Nitro layer:** web concerns (routing, rendering, caching orchestration).
+- **Nuxt 4 / Nitro layer:** web concerns (routing, rendering, caching orchestration).
 - **Content Access Layer:** stable domain contract and CMS adaptation.
 - **CMS:** source of truth for content; the application does not directly depend on CMS schemas.
 
 ---
 
-## 3) Frontend Architecture (Nuxt 3)
+## 3) Frontend Architecture (Nuxt 4)
 
 ### File-based routing
 
 Nuxt's file-based router is the primary composition mechanism:
 
-- **`pages/` directory** for reference sections (rules, conditions, actions, tags).
-- **`layouts/` directory** for a stable application shell: header, navigation, search, language switcher, content container.
+- **`app/pages/` directory** for reference sections (rules, conditions, actions, tags).
+- **`app/layouts/` directory** for a stable application shell: header, navigation, search, language switcher, content container.
 - **Server-first data fetching:** pages and most components load data on the server via `useAsyncData` / `useFetch` calling the ContentRepository.
+
+> **Nuxt 4 directory layout:** all UI source (`pages/`, `layouts/`, `components/`, `composables/`, `assets/`) lives under `app/`. Server code stays in `server/` at the project root. This is the Nuxt 4 default — no extra configuration required.
 
 ### SSR vs Client-Only Components
 
-All `.vue` components in Nuxt 3 render on the server by default and hydrate on the client. Client-only and server-only rendering are opt-in.
+All `.vue` components in Nuxt 4 render on the server by default and hydrate on the client. Client-only and server-only rendering are opt-in.
 
 **Server-rendered (default):**
 
@@ -116,10 +119,10 @@ All `.vue` components in Nuxt 3 render on the server by default and hydrate on t
 
 ### Layouts, loading states, and error handling
 
-- **Root layout (`layouts/default.vue`):** typography/theme providers, base grid, global navigation.
+- **Root layout (`app/layouts/default.vue`):** typography/theme providers, base grid, global navigation.
 - **Section layouts:** shared UI for a section (e.g. list + filters).
 - **Loading states:** handled via the `pending` state from `useAsyncData` / `useFetch`, and `<NuxtLoadingIndicator>`.
-- **Error handling:** `error.vue` for global errors; `useError()` and `createError()` for route-level CMS or mapping errors.
+- **Error handling:** `app/error.vue` for global errors; `useError()` and `createError()` for route-level CMS or mapping errors.
 
 ---
 
@@ -213,6 +216,8 @@ Example flow for loading an entity page (e.g. Condition):
 3. **Content load**
    - The page's `useAsyncData` calls `ContentRepository.getConditionBySlug(locale, slug)`.
    - Repository fetches DTOs from the CMS.
+   - **Nuxt 4 note:** `useAsyncData` / `useFetch` return **shallow reactive** data by default (changed from deep reactive in Nuxt 3). For domain entities with nested objects (e.g. `condition.relatedConditions[0].tags`), pass `{ deep: true }` explicitly if reactivity on nested properties is needed. For read-only SSR data this is rarely required.
+   - **Nuxt 4 note:** the default `dedupe` strategy is `'cancel'` — a repeated call cancels the in-flight request and starts a new one (Nuxt 3 was `'defer'`). This is correct for page navigation but must be considered if the same key is fetched concurrently from multiple components.
 
 4. **Validation & mapping**
    - DTOs are validated for structure and required fields.
@@ -235,7 +240,7 @@ Example flow for loading an entity page (e.g. Condition):
 
 ## 7) Caching & Revalidation Strategy
 
-### Caching in Nuxt 3 / Nitro
+### Caching in Nuxt 4 / Nitro
 
 For a read-heavy reference application:
 
@@ -301,7 +306,7 @@ For a read-heavy reference application:
 
 ### Error boundaries
 
-- Route-level error handling (`error.vue`, `createError`) isolates:
+- Route-level error handling (`app/error.vue`, `createError`) isolates:
   - content loading failures,
   - mapping/validation errors,
   - rendering issues.
