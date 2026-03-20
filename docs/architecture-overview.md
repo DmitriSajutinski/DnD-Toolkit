@@ -1,4 +1,3 @@
-
 # Architecture Overview — DnD Reference Hub (Nuxt 4 + Storyblok)
 
 This document describes the target architecture of the pet project “DnD reference hub” for players (and, in the future, GMs). Its purpose is to capture how the system is structured, why specific decisions were made, and where responsibility boundaries lie, so that the document can serve as a reference for implementation, scaling, and future ADRs.

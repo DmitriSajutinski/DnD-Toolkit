@@ -28,7 +28,12 @@
     "prettier-plugin-vue": "^1.1.6"
   },
   "lint-staged": {
-    "*.{vue,ts,js}": ["eslint --fix", "prettier --write"],
-    "*.{json,md,css}": ["prettier --write"]
+    "*.{vue,ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   }
 }

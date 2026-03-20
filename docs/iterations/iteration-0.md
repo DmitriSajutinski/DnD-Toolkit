@@ -173,18 +173,21 @@ Must pass with zero errors on the clean scaffold before proceeding.
 - [x] Create three env files:
 
   **`.env.example`** — committed, empty values, documents every required variable:
+
   ```
   NUXT_STORYBLOK_TOKEN=
   NUXT_PUBLIC_STORYBLOK_VERSION=published
   ```
 
   **`.env.demo`** — gitignored, local development environment with demo Storyblok space credentials:
+
   ```
   NUXT_STORYBLOK_TOKEN=<demo_space_token>
   NUXT_PUBLIC_STORYBLOK_VERSION=published
   ```
 
   **`.env`** — gitignored, production secrets. Never committed:
+
   ```
   NUXT_STORYBLOK_TOKEN=<real_production_token>
   NUXT_PUBLIC_STORYBLOK_VERSION=published

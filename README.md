@@ -61,16 +61,16 @@ App runs at `http://localhost:3000`.
 
 ## Scripts
 
-| Script                 | Description                          |
-| ---------------------- | ------------------------------------ |
-| `npm run dev`          | Start development server             |
-| `npm run build`        | Build for production                 |
-| `npm run preview`      | Preview production build locally     |
-| `npm run typecheck`    | Run TypeScript type checking         |
-| `npm run lint`         | Run ESLint                           |
-| `npm run lint:fix`     | Run ESLint with auto-fix             |
-| `npm run format`       | Format all files with Prettier       |
-| `npm run format:check` | Check formatting without writing     |
+| Script                 | Description                      |
+| ---------------------- | -------------------------------- |
+| `npm run dev`          | Start development server         |
+| `npm run build`        | Build for production             |
+| `npm run preview`      | Preview production build locally |
+| `npm run typecheck`    | Run TypeScript type checking     |
+| `npm run lint`         | Run ESLint                       |
+| `npm run lint:fix`     | Run ESLint with auto-fix         |
+| `npm run format`       | Format all files with Prettier   |
+| `npm run format:check` | Check formatting without writing |
 
 ---
 
@@ -113,13 +113,13 @@ docs/                   # Project documentation
 
 ## Roadmap
 
-| Iteration                   | Goal                                    |
-| --------------------------- | --------------------------------------- |
-| **0 — Foundation**          | Tooling, CI, base structure (current)   |
-| **1 — Content Core**        | Storyblok integration, reference pages  |
-| **2 — Navigation & Search** | Navigation system, full-text search     |
-| **3 — i18n & Performance**  | RU/EN, caching, optimization            |
-| **4 — Quality & Release**   | Tests, docs, public deployment          |
+| Iteration                   | Goal                                   |
+| --------------------------- | -------------------------------------- |
+| **0 — Foundation**          | Tooling, CI, base structure (current)  |
+| **1 — Content Core**        | Storyblok integration, reference pages |
+| **2 — Navigation & Search** | Navigation system, full-text search    |
+| **3 — i18n & Performance**  | RU/EN, caching, optimization           |
+| **4 — Quality & Release**   | Tests, docs, public deployment         |
 
 See `docs/roadmap.md` for details.
 
