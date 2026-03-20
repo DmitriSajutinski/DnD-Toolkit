@@ -65,20 +65,26 @@ The product is used in a **high cost-of-failure** context: during a live game se
 
 ### What counts as unit tests
 
+- **Mapper functions** — the primary unit test target. `mapCondition`, `mapAction`, etc. are pure functions with no dependencies. Test with a complete valid fixture, missing optional fields, and an invalid shape.
 - Domain logic and rules independent of UI.
-- Utilities and helpers.
-- CMS (Storyblok) data transformations and normalization.
+- Utilities and helpers, including error construction.
 
 ### What is not unit testing
 
 - Vue rendering and DOM behavior.
 - Nuxt/Nitro fetch and caching mechanics.
+- Fetcher functions (these hit the network — test via integration or with a mocked `$fetch`).
 - Literal translation correctness.
 
 ### Mocking approach
 
-- **CMS:** local JSON fixtures and data factories.
+- **CMS mappers:** raw Storyblok story fixtures as plain TypeScript objects — no network, no Storyblok SDK required.
 - **i18n:** explicit locale parameters and minimal dictionaries.
+
+### Tooling
+
+- **Vitest** with Node environment. Mapper tests require no Nuxt context and run in milliseconds.
+- Tests live alongside the mappers in `server/lib/content/storyblok/mappers/__tests__/` or in a root-level `tests/unit/` directory — pick one convention per project and stay consistent.
 
 ### Coverage criteria
 

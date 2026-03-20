@@ -52,15 +52,21 @@ Must pass with zero errors on the clean scaffold before proceeding.
   modules: ['@nuxt/eslint'],
   ```
 - [x] Ran `nuxt prepare` — auto-generated `eslint.config.mjs` and `.nuxt/eslint.config.mjs`
-- [x] Added baseline rules to `eslint.config.mjs`:
+- [x] Added baseline rules to `eslint.config.mjs`. `withNuxt()` accepts multiple config objects — the second one disables `vue/multi-word-component-names` specifically for Nuxt reserved filenames (pages, layouts, `error.vue`) that by convention cannot be multi-word:
   ```js
-  export default withNuxt({
-    rules: {
-      'vue/multi-word-component-names': 'error',
-      'vue/component-api-style': ['error', ['script-setup']],
-      '@typescript-eslint/no-explicit-any': 'error',
+  export default withNuxt(
+    {
+      rules: {
+        'vue/multi-word-component-names': 'error',
+        'vue/component-api-style': ['error', ['script-setup']],
+        '@typescript-eslint/no-explicit-any': 'error',
+      },
     },
-  })
+    {
+      files: ['app/pages/**/*.vue', 'app/layouts/**/*.vue', 'app/error.vue'],
+      rules: { 'vue/multi-word-component-names': 'off' },
+    },
+  )
   ```
 - [x] Added scripts to `package.json`:
   ```json
@@ -148,9 +154,9 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
     modules: [
       '@nuxt/eslint',
-      // '@nuxtjs/i18n',     -- Iteration 3
-      // '@nuxtjs/storyblok', -- Iteration 1
-      // '@pinia/nuxt',       -- when needed
+      // '@nuxtjs/i18n',   -- Iteration 3
+      // '@storyblok/nuxt', -- Iteration 1 (not '@nuxtjs/storyblok' — that is community/unmaintained)
+      // '@pinia/nuxt',     -- when needed
     ],
 
     runtimeConfig: {
@@ -261,11 +267,18 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
 ## 7. `error.vue` — Global Error Page
 
-**Why:** Without `error.vue`, Nuxt shows a raw error page. Setting a minimal one now means CMS failures and 404s during development already look intentional rather than broken.
+**Why:** Without `error.vue`, Nuxt shows a raw error page. Setting a meaningful one now means CMS failures and 404s during development already look intentional rather than broken. Getting the error page right in Iteration 0 also validates that `<NuxtLayout>` + `<NuxtPage>` and `useHead` work correctly before any content pages exist.
 
 ### Tasks
 
-- [x] Create `app/error.vue`:
+- [x] Create `app/error.vue` — a semantic, user-friendly global error page:
+  - Receives the `error: NuxtError` prop provided by Nuxt.
+  - Uses a `computed` to distinguish 404 from other errors and shows appropriate copy.
+  - Calls `useHead` to set the browser tab title to the status code.
+  - `clearError({ redirect: '/' })` on the action button — returns the user to home and clears the error state cleanly.
+  - Scoped styles with a centered full-viewport layout; the raw status code displayed at low opacity as a background element.
+
+  > **Nuxt 4 template note:** in `<template>`, reference `error.statusCode` directly (the prop is available as a template binding without the `props.` prefix). Using `props.error.X` in the template causes a runtime warning.
 
 ---
 
@@ -339,7 +352,7 @@ Before closing Iteration 0, all of the following must be true:
 - [ ] `npm run dev` — app loads at `http://localhost:3000`
 - [ ] Pre-commit hook fires on `git commit`
 - [ ] CI pipeline is green on `main`
-- [ ] `.env.example` is committed, `.env` is gitignored
+- [ ] `.env.example` is committed; `.env` and `.env.demo` are gitignored (`.gitignore` matches `.env.*` with a `!.env.example` exception)
 - [ ] Directory structure matches section 6
 - [ ] `app/error.vue` exists
 - [ ] `app.vue` uses `<NuxtLayout>` + `<NuxtPage>`
