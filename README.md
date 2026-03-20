@@ -1,4 +1,4 @@
-# Grimoire — DnD Reference Hub
+# Grimo — DnD Grimoire / Reference Hub
 
 A fast, reliable reference tool for Dungeons & Dragons players during live game sessions. Built as a production-oriented pet project demonstrating senior-level engineering practices.
 
