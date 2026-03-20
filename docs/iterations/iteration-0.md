@@ -138,7 +138,7 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
 ### Tasks
 
-- [ ] Update `nuxt.config.ts` to the baseline structure:
+- [x] Update `nuxt.config.ts` to the baseline structure:
 
   ```ts
   export default defineNuxtConfig({
@@ -170,10 +170,27 @@ Must pass with zero errors on the clean scaffold before proceeding.
   })
   ```
 
-- [ ] Create `.env` (gitignored) and `.env.example` (committed):
+- [x] Create three env files:
+
+  **`.env.example`** — committed, empty values, documents every required variable:
   ```
   NUXT_STORYBLOK_TOKEN=
+  NUXT_PUBLIC_STORYBLOK_VERSION=published
   ```
+
+  **`.env.demo`** — gitignored, local development environment with demo Storyblok space credentials:
+  ```
+  NUXT_STORYBLOK_TOKEN=<demo_space_token>
+  NUXT_PUBLIC_STORYBLOK_VERSION=published
+  ```
+
+  **`.env`** — gitignored, production secrets. Never committed:
+  ```
+  NUXT_STORYBLOK_TOKEN=<real_production_token>
+  NUXT_PUBLIC_STORYBLOK_VERSION=published
+  ```
+
+  > Only `.env.example` is committed. `.env` and `.env.demo` are gitignored (match `.env.*` in `.gitignore`).
 
 ---
 
@@ -183,7 +200,7 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
 ### Tasks
 
-- [ ] Create the following directories and placeholder files:
+- [x] Create the following directories and placeholder files:
 
   ```
   app/                          # All UI source lives here (Nuxt 4 default)
@@ -207,7 +224,7 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
   > **Nuxt 4 convention:** application code lives under `app/` to clearly separate it from server code and config files. `server/` and `public/` remain at the project root — Nuxt scans them there by default.
 
-- [ ] `app/layouts/default.vue` — minimal shell:
+- [x] `app/layouts/default.vue` — minimal shell:
 
   ```vue
   <template>
@@ -217,7 +234,7 @@ Must pass with zero errors on the clean scaffold before proceeding.
   </template>
   ```
 
-- [ ] `app/pages/index.vue` — temporary placeholder:
+- [x] `app/pages/index.vue` — temporary placeholder:
 
   ```vue
   <template>
@@ -245,25 +262,7 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
 ### Tasks
 
-- [ ] Create `app/error.vue`:
-
-  ```vue
-  <script setup lang="ts">
-  import type { NuxtError } from '#app'
-
-  const props = defineProps<{ error: NuxtError }>()
-
-  const handleError = () => clearError({ redirect: '/' })
-  </script>
-
-  <template>
-    <div>
-      <h1>{{ error.statusCode }}</h1>
-      <p>{{ error.message }}</p>
-      <button @click="handleError">Go home</button>
-    </div>
-  </template>
-  ```
+- [x] Create `app/error.vue`:
 
 ---
 
@@ -280,7 +279,7 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
 ### Tasks
 
-- [ ] Create `.github/workflows/ci.yml`:
+- [x] Create `.github/workflows/ci.yml`:
 
   ```yaml
   name: CI
@@ -319,7 +318,7 @@ Must pass with zero errors on the clean scaffold before proceeding.
 
 ### Tasks
 
-- [ ] Update the top of `README.md` setup section to:
+- [x] Update the top of `README.md` setup section to:
   - List the correct Node.js version requirement (>=24)
   - Reference `.env.example` for environment variables
   - Document the four key scripts: `dev`, `typecheck`, `lint`, `build`

@@ -18,6 +18,9 @@ logs
 .fleet
 .idea
 
+# Claude Code internal memory (not project documentation)
+memory/
+
 # Local env files
 .env
 .env.*

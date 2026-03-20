@@ -1,230 +1,136 @@
-# Nuxt Minimal Starter
+# Grimoire — DnD Reference Hub
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A fast, reliable reference tool for Dungeons & Dragons players during live game sessions. Built as a production-oriented pet project demonstrating senior-level engineering practices.
 
-## Setup
-
-Make sure to install dependencies:
-
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-# Grimo - Dungeon and Dragons Grimoire
-
-A production-oriented pet project built as a fast, reliable reference tool for Dungeons & Dragons players during live game sessions.
+> **Status:** MVP under active development · Iteration 0 (Foundation)
 
 ---
 
-## 1. Project Overview
+## What it is
 
-**DnD Reference Hub** is a web-based reference application designed to provide fast and clear access to Dungeons & Dragons rules and supporting materials during live gameplay.
+**Grimoire** solves a specific problem: players frequently need to look up exact rule wording, actions, and conditions mid-session without breaking the flow of the game. The application prioritizes **speed, clarity, and predictable navigation** over feature breadth.
 
-The core problem it addresses is friction during sessions: players frequently need to look up exact rule wording, actions, conditions, or clarifications without breaking the flow of the game. The application prioritizes speed, clarity, and predictable navigation over feature breadth.
-
-The product is explicitly **player-first**. Game Master (GM)–specific functionality is planned for later phases and is intentionally excluded from the current MVP scope.
+The MVP is **player-first**. GM-specific functionality is planned for later phases.
 
 ---
 
-## 2. Key Features (MVP)
+## Tech Stack
 
-- Structured browsing of DnD reference content
-- Clear category-based navigation
-- Fast access to commonly used rules during sessions
-- Multilingual support (RU / ET / EN)
-- Content managed via a headless CMS
-- Responsive UI for desktop and mobile devices
-
----
-
-## 3. Tech Stack
-
-- **Nuxt 3 (Vue 3)**
-  Application framework providing file-based routing, SSR, and server-first architecture via Nitro.
-
-- **TypeScript (strict)**  
-  Ensures type safety and reduces runtime errors.
-
-- **Storyblok (Headless CMS)**  
-  Centralized content management, decoupled from the application.
-
-- **i18n (RU / ET / EN)**  
-  Multilingual support for both UI and content.
-
-- **Testing (unit + e2e)**  
-  Validation of business logic and critical user flows.
-
-- **CI/CD**  
-  Automated checks, builds, and quality gates.
+| Layer     | Technology                                |
+| --------- | ----------------------------------------- |
+| Framework | Nuxt 4 (Vue 3, SSR)                       |
+| Language  | TypeScript (strict)                       |
+| Server    | Nitro                                     |
+| CMS       | Storyblok (headless)                      |
+| i18n      | RU / ET / EN                              |
+| Testing   | Vitest · Vue Testing Library · Playwright |
+| CI        | GitHub Actions                            |
 
 ---
 
-## 4. Architecture & Design Decisions
-
-The project follows a production-grade architectural approach focused on scalability, maintainability, and explicit decision-making.
-
-Key principles:
-
-- Server-first rendering using Nuxt 3 and Nitro
-- Full separation of content and application logic via a headless CMS
-- Minimal user state in MVP, with no server-side persistence
-- All non-trivial technical decisions are documented and traceable
-
-Relevant documentation:
-
-- **Architecture Overview**: `docs/architecture-overview.md`
-- **Architecture Decision Records (ADR)**: `docs/adr/`
-
----
-
-## 5. Project Structure
-
-High-level repository layout:
-
-- /pages # File-based routes (Nuxt auto-routing)
-- /layouts # Application shell layouts
-- /components # Reusable UI components
-- /composables # Shared Vue composables (auto-imported)
-- /server # Nitro server — API routes (server/api/), utilities
-- /features # Feature-oriented modules (domain-driven grouping)
-- /lib # Utilities, clients, shared logic
-- /content # Content models and schemas
-- /docs # Project documentation
-- /public # Static assets
-
-The structure is designed for clarity, predictable ownership, and long-term scalability.
-
----
-
-## 6. Getting Started (Local Development)
+## Getting Started
 
 ### Requirements
 
 - Node.js >= 24
 - npm
 
-### Environment Variables
+### 1. Install dependencies
 
-Create a `.env.local` file:
-
-### Run the Project
-
+```bash
 npm install
+```
+
+### 2. Set up environment
+
+```bash
+cp .env.demo .env
+```
+
+Fill in your credentials — see `.env.example` for all available variables.
+
+### 3. Start development server
+
+```bash
 npm run dev
+```
 
-## 7. Quality & Engineering Practices
-
-- **Type Safety**  
-  Strict TypeScript configuration, no implicit `any`.
-
-- **Testing Strategy**
-  - Unit tests for core business logic
-  - End-to-end tests for critical user scenarios
-
-- **Linting & Formatting**  
-  Enforced, consistent code style across the codebase.
-
-- **CI Pipeline**
-  - Type checking
-  - Linting
-  - Automated tests
-  - Pull request quality gates
+App runs at `http://localhost:3000`.
 
 ---
 
-## 8. Documentation
+## Scripts
 
-All documentation is stored in the `/docs` directory:
-
-- `docs/product-brief` — product vision, scope, user stories
-- `docs/architecture-overview` — architecture documentation and ADRs
-
----
-
-## 9. Roadmap
-
-Current status: **MVP under active development**.
-
-Development principles:
-
-- Iterative, incremental delivery
-- MVP-first mindset
-- Every significant change is documented and justified
-
-Roadmap document: `docs/roadmap.md`
+| Script                 | Description                          |
+| ---------------------- | ------------------------------------ |
+| `npm run dev`          | Start development server             |
+| `npm run build`        | Build for production                 |
+| `npm run preview`      | Preview production build locally     |
+| `npm run typecheck`    | Run TypeScript type checking         |
+| `npm run lint`         | Run ESLint                           |
+| `npm run lint:fix`     | Run ESLint with auto-fix             |
+| `npm run format`       | Format all files with Prettier       |
+| `npm run format:check` | Check formatting without writing     |
 
 ---
 
-## 10. Content & Legal Notes
+## Project Structure
 
-This project uses Dungeons & Dragons–related reference information for non-commercial and educational purposes only. Content is processed and presented with respect for applicable legal usage guidelines and without claiming ownership of original materials.
+```
+app/                    # All UI source (Nuxt 4 default)
+  pages/                # File-based routes
+  layouts/              # Application shell layouts
+  components/           # Reusable UI components
+  composables/          # Shared Vue composables (auto-imported)
+  assets/               # CSS, fonts, images
+  app.vue               # App entry point
+  error.vue             # Global error page
+
+server/                 # Nitro server
+  api/                  # API route handlers
+
+public/                 # Static files (served as-is)
+
+docs/                   # Project documentation
+  adr/                  # Architecture Decision Records
+  iterations/           # Iteration plans and progress
+```
 
 ---
 
-## 11. License
+## Documentation
 
-License information will be added later.
+| Document                        | Description                            |
+| ------------------------------- | -------------------------------------- |
+| `docs/architecture-overview.md` | System architecture and key principles |
+| `docs/adr/`                     | Architecture Decision Records          |
+| `docs/mvp-scope.md`             | MVP scope and product goals            |
+| `docs/roadmap.md`               | High-level product roadmap             |
+| `docs/testing-strategy.md`      | Testing approach and tooling           |
+| `docs/iterations/`              | Per-iteration implementation plans     |
+
+---
+
+## Roadmap
+
+| Iteration                   | Goal                                    |
+| --------------------------- | --------------------------------------- |
+| **0 — Foundation**          | Tooling, CI, base structure (current)   |
+| **1 — Content Core**        | Storyblok integration, reference pages  |
+| **2 — Navigation & Search** | Navigation system, full-text search     |
+| **3 — i18n & Performance**  | RU/EN, caching, optimization            |
+| **4 — Quality & Release**   | Tests, docs, public deployment          |
+
+See `docs/roadmap.md` for details.
+
+---
+
+## Legal
+
+This project uses Dungeons & Dragons–related reference information for non-commercial and educational purposes only. Content is presented with respect for applicable legal usage guidelines without claiming ownership of original materials.
+
+---
+
+## License
+
+To be defined.
