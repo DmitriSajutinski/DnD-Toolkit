@@ -1,6 +1,6 @@
 import type { StoryblokConfig } from '#server/lib/content/storyblok/client'
 import type { Condition, ContentList } from '#server/lib/content/types'
-import type { ISbStoryData } from 'storyblok-js-client';
+import type { ISbStoryData } from 'storyblok-js-client'
 import StoryblokClient from 'storyblok-js-client'
 import { mapCondition } from '#server/lib/content/storyblok/mappers/condition.mapper'
 import { ContentNotFound, ContentUnAvailable } from '#server/lib/content/errors'

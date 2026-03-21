@@ -14,7 +14,6 @@ export default defineCachedEventHandler(
 
     try {
       // TODO: derive locale from request (iteration 2)
-      console.log('slug')
       return await fetchConditionBySlug(config, 'en', slug)
     } catch (err) {
       if (err instanceof ContentNotFound) {
