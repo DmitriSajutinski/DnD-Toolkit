@@ -166,38 +166,43 @@ The domain model supports relations between entities (Condition ↔ RulePage ↔
 
 ---
 
-## 5) Content Access Layer (Abstraction)
+## 5) Content Access Layer (Pure Functions)
 
-### ContentRepository
+The Content Access Layer is implemented as a set of pure functions, not a class hierarchy. The isolation principle remains the same — no direct CMS calls in pages or API routes — but the mechanism is idiomatic Nuxt 4 / Vue 3.
 
-A dedicated `ContentRepository` interface exposes domain-oriented operations:
+### Server-side layer (`server/lib/content/`)
 
-- `getConditionBySlug(locale, slug)`
-- `listConditions(locale, filters)`
-- `getActionBySlug(locale, slug)`
-- `getRulePageByPath(locale, path)`
-- `search(locale, query, scope)`
-- `getTags(locale)`
+**Domain types (`types.ts`):** TypeScript interfaces for domain entities (`Condition`, `Action`, `Tag`, `ContentList<T>`). Zero Storyblok-specific fields. These are the stable contracts that everything above the CMS layer depends on.
 
-### Why an abstraction layer is required
+**Domain errors (`errors.ts`):** Typed error classes with a `_tag` string literal discriminant. `ContentNotFound` and `ContentUnavailable` cover the two meaningful failure modes. All layers above the fetchers speak this error vocabulary, independent of Storyblok's actual error shapes.
 
-- **Dependency inversion:** UI and routing depend on a stable domain contract, not on the Storyblok API.
-- **Testability:** repositories can be replaced with mock/local implementations without network calls.
-- **Future-proofing:** replacing the CMS or adding additional sources does not affect UI code.
+**Storyblok config (`storyblok/client.ts`):** A `buildStoryblokConfig(runtimeConfig)` helper that reads the API token and content version from Nuxt server-side runtime config. Called per request — never at module load time. This ensures secrets stay out of the module scope and version resolution is always environment-correct.
 
-### Possible implementations
+**Fetchers (`storyblok/fetchers.ts`):** Pure async functions — one per content operation. Each fetcher accepts a config object, a locale, and any required identifiers. It calls the Storyblok Delivery API, passes the raw response through a mapper, and returns a typed domain entity. On failure it throws `ContentNotFound` or `ContentUnavailable`. No class, no singleton, no `this`.
 
-- **StoryblokContentRepository**
-  - Handles Delivery API calls, link resolution, rich text normalization, mapping, and validation.
-- **Mock / LocalContentRepository**
-  - Used for tests, Storybook/preview environments, and local development.
-  - Enables deterministic reproduction of edge cases and failure scenarios.
+Typical operations:
 
-### Benefits for testing and CMS replacement
+- `fetchConditions(config, locale)` → `ContentList<Condition>`
+- `fetchConditionBySlug(config, locale, slug)` → `Condition`
+- `fetchActionBySlug(config, locale, slug)` → `Action`
 
-- Tests are written against domain entities, not CMS payloads.
-- Integration tests focus on the adapter and mapping correctness.
-- Cache decorators (e.g. `CachedContentRepository`) can be added transparently.
+**Mappers (`storyblok/mappers/`):** One pure function per content type: `mapCondition(story): Condition`. Input is the raw Storyblok story object; output is the domain entity. No side effects, no dependencies. The primary target for unit tests. Rich text blocks are rendered to an HTML string inside the mapper — the component receives a string, never a raw Storyblok block structure.
+
+### Client-side composables (`app/composables/`)
+
+Thin `useFetch` wrappers that give pages a named, typed interface to the server API routes:
+
+- `useConditions()` → `{ data: ContentList<Condition>, pending, error }`
+- `useCondition(slug: MaybeRef<string>)` → `{ data: Condition, pending, error }`
+
+Pages import the composable, not `useFetch` directly. The reactive `MaybeRef<string>` slug parameter in detail composables ensures the fetch re-triggers on slug change without manual watchers. No Storyblok imports appear anywhere in `app/`.
+
+### Why this approach
+
+- **No class keyword in server/lib:** pure functions are simpler to read, tree-shakeable, and require no instantiation ceremony.
+- **Same isolation guarantee as ADR-0003:** CMS-specific code is confined to `server/lib/content/storyblok/`; pages and API routes never import from it directly.
+- **Testing:** mapper functions are pure — they need no mocking framework and no Nuxt context. Fetchers are testable via fixtures. Composables are tested with `@testing-library/vue` against mock API routes.
+- **Future CMS migration:** swap the contents of `server/lib/content/storyblok/` and update the API routes. Types, errors, composables, pages — unchanged.
 
 ---
 
@@ -213,8 +218,8 @@ Example flow for loading an entity page (e.g. Condition):
    - Content: locale is passed to the ContentRepository.
 
 3. **Content load**
-   - The page's `useAsyncData` calls `ContentRepository.getConditionBySlug(locale, slug)`.
-   - Repository fetches DTOs from the CMS.
+   - The page calls a composable (`useCondition(slug)`), which wraps `useFetch` against a Nitro API route.
+   - The API route calls `buildStoryblokConfig(runtimeConfig)` and then the appropriate fetcher function.
    - **Nuxt 4 note:** `useAsyncData` / `useFetch` return **shallow reactive** data by default (changed from deep reactive in Nuxt 3). For domain entities with nested objects (e.g. `condition.relatedConditions[0].tags`), pass `{ deep: true }` explicitly if reactivity on nested properties is needed. For read-only SSR data this is rarely required.
    - **Nuxt 4 note:** the default `dedupe` strategy is `'cancel'` — a repeated call cancels the in-flight request and starts a new one (Nuxt 3 was `'defer'`). This is correct for page navigation but must be considered if the same key is fetched concurrently from multiple components.
 

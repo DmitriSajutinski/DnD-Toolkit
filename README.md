@@ -81,13 +81,17 @@ app/                    # All UI source (Nuxt 4 default)
   pages/                # File-based routes
   layouts/              # Application shell layouts
   components/           # Reusable UI components
-  composables/          # Shared Vue composables (auto-imported)
+  composables/          # useFetch wrappers and client-side composables
   assets/               # CSS, fonts, images
   app.vue               # App entry point
   error.vue             # Global error page
 
-server/                 # Nitro server
-  api/                  # API route handlers
+server/                 # Nitro server (at project root)
+  api/                  # API route handlers (defineCachedEventHandler)
+  lib/content/          # Content Access Layer
+    types.ts            # Domain entities (no CMS fields)
+    errors.ts           # ContentNotFound, ContentUnavailable
+    storyblok/          # All Storyblok-specific code is here
 
 public/                 # Static files (served as-is)
 
@@ -100,14 +104,15 @@ docs/                   # Project documentation
 
 ## Documentation
 
-| Document                        | Description                            |
-| ------------------------------- | -------------------------------------- |
-| `docs/architecture-overview.md` | System architecture and key principles |
-| `docs/adr/`                     | Architecture Decision Records          |
-| `docs/mvp-scope.md`             | MVP scope and product goals            |
-| `docs/roadmap.md`               | High-level product roadmap             |
-| `docs/testing-strategy.md`      | Testing approach and tooling           |
-| `docs/iterations/`              | Per-iteration implementation plans     |
+| Document                        | Description                             |
+| ------------------------------- | --------------------------------------- |
+| `PRACTICES.md`                  | Developer practices and rules reference |
+| `docs/architecture-overview.md` | System architecture and key principles  |
+| `docs/adr/`                     | Architecture Decision Records           |
+| `docs/mvp-scope.md`             | MVP scope and product goals             |
+| `docs/roadmap.md`               | High-level product roadmap              |
+| `docs/testing-strategy.md`      | Testing approach and tooling            |
+| `docs/iterations/`              | Per-iteration implementation plans      |
 
 ---
 
