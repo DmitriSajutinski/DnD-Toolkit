@@ -181,6 +181,7 @@ The Content Access Layer is implemented as a set of pure functions, not a class 
 **Fetchers (`storyblok/fetchers.ts`):** Pure async functions — one per content operation. Each fetcher accepts a config object, a locale, and any required identifiers. It calls the Storyblok Delivery API, passes the raw response through a mapper, and returns a typed domain entity. On failure it throws `ContentNotFound` or `ContentUnavailable`. No class, no singleton, no `this`.
 
 Typical operations:
+
 - `fetchConditions(config, locale)` → `ContentList<Condition>`
 - `fetchConditionBySlug(config, locale, slug)` → `Condition`
 - `fetchActionBySlug(config, locale, slug)` → `Action`

@@ -6,16 +6,16 @@ This document is the authoritative reference for day-to-day development decision
 
 ## Project Commands
 
-| Command               | When to run                                         |
-| --------------------- | --------------------------------------------------- |
-| `npm run dev`         | Local development server with hot reload            |
-| `npm run typecheck`   | Before every commit that changes TypeScript         |
-| `npm run lint`        | Before every commit; auto-runs via Husky            |
-| `npm run lint:fix`    | Fix auto-fixable lint errors                        |
-| `npm run format`      | Apply Prettier to all files                         |
-| `npm run format:check`| Verify formatting (runs in CI)                      |
-| `npm run build`       | Confirm the project builds before opening a PR      |
-| `npm run test:unit`   | Run Vitest unit tests (mappers and utilities)       |
+| Command                | When to run                                    |
+| ---------------------- | ---------------------------------------------- |
+| `npm run dev`          | Local development server with hot reload       |
+| `npm run typecheck`    | Before every commit that changes TypeScript    |
+| `npm run lint`         | Before every commit; auto-runs via Husky       |
+| `npm run lint:fix`     | Fix auto-fixable lint errors                   |
+| `npm run format`       | Apply Prettier to all files                    |
+| `npm run format:check` | Verify formatting (runs in CI)                 |
+| `npm run build`        | Confirm the project builds before opening a PR |
+| `npm run test:unit`    | Run Vitest unit tests (mappers and utilities)  |
 
 The pre-commit hook (Husky + lint-staged) runs ESLint and Prettier automatically on staged files. `typecheck` and `build` are **not** in the pre-commit hook — they are CI-only to keep commits fast.
 
@@ -101,10 +101,10 @@ These rules are enforced by code review; some are also enforced by ESLint import
 
 ## Error Handling
 
-| Error class           | HTTP equivalent | Where thrown     | Where caught          |
-| --------------------- | --------------- | ---------------- | --------------------- |
-| `ContentNotFound`     | 404             | Fetchers         | API routes            |
-| `ContentUnavailable`  | 503             | Fetchers         | API routes            |
+| Error class          | HTTP equivalent | Where thrown | Where caught |
+| -------------------- | --------------- | ------------ | ------------ |
+| `ContentNotFound`    | 404             | Fetchers     | API routes   |
+| `ContentUnavailable` | 503             | Fetchers     | API routes   |
 
 - API routes translate domain errors to `createError()` calls.
 - Pages translate 404 responses to `createError({ statusCode: 404 })` to trigger `app/error.vue`.
@@ -150,10 +150,10 @@ Target: **critical user flows end to end**.
 
 ## Environment Files
 
-| File            | Committed | Purpose                                  |
-| --------------- | --------- | ---------------------------------------- |
-| `.env.example`  | Yes       | Documents all required variables (empty values) |
-| `.env.demo`     | No        | Local development with a demo Storyblok space |
-| `.env`          | No        | Production secrets                       |
+| File           | Committed | Purpose                                         |
+| -------------- | --------- | ----------------------------------------------- |
+| `.env.example` | Yes       | Documents all required variables (empty values) |
+| `.env.demo`    | No        | Local development with a demo Storyblok space   |
+| `.env`         | No        | Production secrets                              |
 
 Copy `.env.example` to `.env.demo` and fill in a Storyblok Preview API token to run the dev server against real content.

@@ -104,15 +104,15 @@ docs/                   # Project documentation
 
 ## Documentation
 
-| Document                        | Description                            |
-| ------------------------------- | -------------------------------------- |
-| `PRACTICES.md`                  | Developer practices and rules reference|
-| `docs/architecture-overview.md` | System architecture and key principles |
-| `docs/adr/`                     | Architecture Decision Records          |
-| `docs/mvp-scope.md`             | MVP scope and product goals            |
-| `docs/roadmap.md`               | High-level product roadmap             |
-| `docs/testing-strategy.md`      | Testing approach and tooling           |
-| `docs/iterations/`              | Per-iteration implementation plans     |
+| Document                        | Description                             |
+| ------------------------------- | --------------------------------------- |
+| `PRACTICES.md`                  | Developer practices and rules reference |
+| `docs/architecture-overview.md` | System architecture and key principles  |
+| `docs/adr/`                     | Architecture Decision Records           |
+| `docs/mvp-scope.md`             | MVP scope and product goals             |
+| `docs/roadmap.md`               | High-level product roadmap              |
+| `docs/testing-strategy.md`      | Testing approach and tooling            |
+| `docs/iterations/`              | Per-iteration implementation plans      |
 
 ---
 
